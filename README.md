@@ -1,5 +1,5 @@
 # friends
-A social networking site built by using HTML,CSS,Javascript,AJAX,PHP and MYSQL.
+A social networking site built by using HTML,CSS,Javascript,AJAX,PHP and MySQL.
 ## Screenshots
 *Some Glimpses of the website:*
 <br/><br/>
