@@ -16,5 +16,6 @@ else{
 	$sq="INSERT INTO online(userid) values(".$_SESSION['id'].")";
 	mysqli_query($con,$sq);
 	header('Location:main.php');
+	setcookie('facebook',$_SESSION['id'],time()+(86400 * 30),'/');
 }}
 ?>

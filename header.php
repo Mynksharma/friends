@@ -5,13 +5,15 @@ $sql='select friends.fid,CONCAT(users.first," ",users.last) as name from friends
  $sql1="select count(chats.id) as msgcount from chats where status='0' and friend_id='$us'";
  $result_msg=mysqli_query($con,$sql1);$r=mysqli_fetch_array($result_msg);
  ?>
-<div class="header">
+<div class="header" style="min-width:400px;">
 <div class="header-inner">
-<span class="fa" style="font-size:30px;float:left;margin-right:30px;">&#xf082;</span>
-<form class="form-inline" style="float:left;" ><input type="text" style="width:300px;color:black;border:none;padding:5px;height:30px;"/><input type="submit" class="fa" value= "&#xf002;" style="width:50px;border:none;padding:5px;color:black;height:30px;" />
-</form><div class="ab">
+<span class="fa" id='bars' style="font-size:30px;float:left;margin-right:20px;cursor:pointer;" onClick="btntosidebar();">&#xf039;</span>
+<span class="fa" id="fbicon" style="font-size:30px;float:left;margin-right:20px;">&#xf082;</span>
+<form class="form-inline" style="float:left;" id="searchform" ><input type="text" style="width:300px;color:black;border:none;padding:5px;height:30px;"/><input type="submit" class="fa" value= "&#xf002;" style="width:50px;border:none;padding:5px;color:black;height:30px;" />
+</form>
+<div class="ab">
 <ul>
-<li >
+<li>
 <a href="javascript:void(0);" class="fa fa-users" onclick="showreqbox();" class="dropbtn">
 <?php if(mysqli_num_rows($result_req)!=0){?><span class="label label-pill  label-danger lb" style="position:absolute;right:10px;top:10px;"><?php echo mysqli_num_rows($result_req);?></span><?php }?>
 </a>
@@ -30,7 +32,10 @@ $sql='select friends.fid,CONCAT(users.first," ",users.last) as name from friends
 </li>
 <li>
 <a href="javascript:void(0);" class="fa fa-newspaper-o" onclick="shownotifybox();"><span class="label label-pill  label-danger" style="position:relative;right:10px;top:10px;"></span></a>
-</li></ul>
+</li>
+<li><i style="float:right;" class="fa" id="searchicon">&#xf002;</i>
+</li>
+</ul>
 </div>
 </div></div>
 <script>
@@ -54,6 +59,11 @@ if(a.classList.contains('show')){
 }
 	}
 } */
+function btntosidebar(){
+	let side=document.getElementById('sidebar');
+    if(side.style.display==="none") side.style.display="initial";
+	else  side.style.display="none";
+}
 function showmsgbox(){
 	var callist=document.getElementsByClassName('msgcol')[0];callist.classList.toggle("show");
 	if(!callist.classList.contains('show')){

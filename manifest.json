@@ -1,0 +1,25 @@
+{
+    "name":"FRIENDS",
+    "short_name":"FRNDS",
+      "display":"standalone",
+      "orientation":"portrait-primary",
+      "background_color":"blue",
+      "theme_color":"blue",
+      "start_url":"fb.php",
+      "icons":[{
+          "src":"src/icons/app-icon-48x48.png",
+          "sizes":"48x48"
+      },
+      {
+        "src":"src/icons/app-icon-96x96.png",
+        "sizes":"96x96"
+    },
+    {
+        "src":"src/icons/app-icon-144x144.png",
+        "sizes":"144x144"
+    },
+    {
+        "src":"src/icons/app-icon-256x256.png",
+        "sizes":"256x256"
+    }]
+}

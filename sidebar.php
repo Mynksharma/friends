@@ -1,4 +1,4 @@
-<div class="content-left" style="position:fixed;"><ul><li><a href="profile.php?id=<?php echo $_SESSION['id']; ?>">
+<div class="content-left"  id="sidebar" style="position:fixed;background-color:#C0C0C7;border-radius:5px;"><ul><li><a href="profile.php?id=<?php echo $_SESSION['id']; ?>">
     <img src="uploads\default.png" style="border-radius:50%;height:20px;width:auto;" />
     <b> <?php echo $namf." ".$naml;?></b></a></li><li><a href="main.php">
         <img src="uploads\newsfeed.jfif" style="border-radius:50%;height:20px;width:auto;" />

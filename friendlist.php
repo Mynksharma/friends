@@ -15,15 +15,16 @@ $naml=$row['last'];
 	<script src='https://kit.fontawesome.com/a076d05399.js'></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=0.83,user-scalable=no">
+    <link rel="manifest" href="/manifest.json"/>
     <title></title>
     <style>
     body{margin:0;width:100%;overflow-x:hidden;font-family:'Helvetica';}
-.header{background-color:#053075;padding:10px;min-height:70px;color:white;position:fixed;z-index:1030;top:0;right:0;left:0;}
+.header{background-color:purple;padding:10px;min-height:70px;color:white;position:fixed;z-index:1030;top:0;right:0;left:0;}
 .header-inner{width:85%;margin:0 auto;padding:10px;}
 .ab ul{list-style-type:none;margin:0;padding:0;}
 .ab li{float:right;position:relative;}
-.ab li a{text-decoration:none;color:white;padding-left:20px;font-size:20px;padding-right:20px;position:relative;display:inline-block;}
+.ab li a,#searchicon{text-decoration:none;color:white;padding-left:20px;font-size:20px;padding-right:20px;position:relative;display:inline-block;}
 .ab li .reqcoll{display:none;position:absolute;background-color:white;min-height:50px;min-width:200px;z-index:1;border-radius:5px;box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);top:40px;right:5px;
 }
 .ab li .reqcoll .coll{padding:5px 5px;border-bottom:1px solid #F2EDEC;}
@@ -34,10 +35,10 @@ $naml=$row['last'];
 .content-left li:hover{background-color:rgba(255,255,255,0.5)}
 .content-left li a{text-decoration:none;color:black;}
 .content-left li:hover a{color:green;}
-.content-right{width:83%;float:left;margin-left:16%;background-color:white;}
+.content-right{width:83%;float:left;margin-left:16%;background-color:white;min-width:390px;}
 .show{display:block;}
 .thumb:hover{background-color:#ADB3FF;}
-
+#sidebar{min-width:160px;position:fixed;z-index:2}
     </style>
 <script>
 function showfriends(){
@@ -98,7 +99,7 @@ d1_cont.style.top="0";d1_cont.style.bottom="0";d1_cont.style.left="0";d1_cont.st
 <?php include 'header.php'; ?>
 <div class="content" style="background-color:#e3e4e5;width:auto;padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;">
 <?php include 'sidebar.php'; ?> 
-<div class="content-right" style="width:83%;float:left;margin-left:16%;min-height:80vh;">
+<div class="content-right" style="float:left;min-height:80vh;">
 <div class="jumbotron" style="text-align:center;padding:10px;width:95%;margin:0 auto;margin-top:10px;margin-bottom:20px;">
 <img src="uploads/friendship.png" style="height:40px;margin-right:10px;" />
 <h2 style="display:inline-block;margin:0;vertical-align:middle;"><b><?php echo $namf;?> friends' list</b></h2>
@@ -106,5 +107,57 @@ d1_cont.style.top="0";d1_cont.style.bottom="0";d1_cont.style.left="0";d1_cont.st
 
 </div>
 </div>
+<script>
+
+var sidebar=document.getElementById('sidebar');
+var content_right=document.getElementsByClassName('content-right')[0];
+var searchicon=document.getElementById('searchicon');
+var bars=document.getElementById('bars');
+var fbicon=document.getElementById('fbicon');
+
+function myFunction2(y) {
+  if (y.matches) {console.log('300-850');
+  searchicon.style.display="inline-block";
+document.getElementById('searchform').style.display="none";
+   sidebar.style.display="none";
+   content_right.style.width="100%";
+   content_right.style.marginLeft="0";
+   bars.style.display="inline-block";
+   fbicon.style.display="none";
+  }
+}
+function myFunction3(z){
+	if (z.matches) {console.log('855-1120');
+		searchicon.style.display="none";
+document.getElementById('searchform').style.display="block";
+   sidebar.style.display="none";
+   content_right.style.width="100%";
+   content_right.style.marginLeft="0";
+   bars.style.display="inline-block";
+   fbicon.style.display="none";
+  }
+}
+function myFunction4(w){
+	if (w.matches) {
+		console.log('1121-');
+		searchicon.style.display="none";
+document.getElementById('searchform').style.display="block";
+	sidebar.style.display="initial";
+  content_right.style.width="83%";
+   content_right.style.marginLeft="16%";
+   bars.style.display="none";
+   fbicon.style.display="initial";
+	}
+  }
+var y=window.matchMedia("(min-width:300px) and (max-width:854px)");
+var z=window.matchMedia("(min-width:855px) and (max-width:1120px)");
+var w=window.matchMedia("(min-width:1121px)");
+y.addListener(myFunction2);
+z.addListener(myFunction3);
+w.addListener(myFunction4);
+myFunction2(y);
+myFunction3(z);
+myFunction4(w);
+</script>
 </body>
 </html>

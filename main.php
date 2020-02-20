@@ -1,10 +1,12 @@
 <?php 
-require 'commonfb.php';$name=$_SESSION['email'];
+require 'commonfb.php';
+if(isset($_SESSION['email'])){
+	$name=$_SESSION['email'];
 $sql="select first,last from users where email='$name';";
 $result=mysqli_query ($con,$sql);$row=mysqli_fetch_array($result);
 $namf=$row['first'];
 $naml=$row['last'];
- $us=$_SESSION['id'];
+ $us=$_SESSION['id'];}
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,14 +18,18 @@ $naml=$row['last'];
 	<script src='https://kit.fontawesome.com/a076d05399.js'></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=0.83,user-scalable=no">
+	<meta name="theme-color" content="white">
+	<link rel="manifest" href="manifest.json"/>
 <style>
+
 body{margin:0;width:100%;overflow-x:hidden;font-family:'Helvetica';}
-.header{background-color:#053075;padding:10px;min-height:70px;color:white;position:fixed;z-index:1030;top:0;right:0;left:0;}
+.header{background-color:purple;padding:10px;min-height:70px;color:white;position:fixed;z-index:1030;top:0;right:0;left:0;}
 .header-inner{width:85%;margin:0 auto;padding:10px;}
-.ab ul{list-style-type:none;margin:0;padding:0;}
+.ab ul{list-style-type:none;margin:0;padding:0;float:right;}
+.ab{float:right;}
 .ab li{float:right;position:relative;}
-.ab li a{text-decoration:none;color:white;padding-left:20px;font-size:20px;padding-right:20px;position:relative;display:inline-block;}
+.ab li a,#searchicon{text-decoration:none;color:white;padding-left:20px;font-size:20px;padding-right:20px;position:relative;display:inline-block;}
 .ab li .reqcoll{display:none;position:absolute;background-color:white;min-height:50px;min-width:200px;z-index:1;border-radius:5px;box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);top:40px;right:5px;
 }
 .ab li .reqcoll .coll{padding:5px 5px;border-bottom:1px solid #F2EDEC;}
@@ -34,14 +40,14 @@ body{margin:0;width:100%;overflow-x:hidden;font-family:'Helvetica';}
 .content-left li:hover{background-color:rgba(255,255,255,0.5)}
 .content-left li a{text-decoration:none;color:black;}
 .content-left li:hover a{color:green;}
-.content-center{width:50%;float:left;margin-left:16%;}
+.content-center{width:50%;float:left;margin-left:16%;min-width:400px;}
 .bta{margin-right:10px;}
-.content-center-right{width:20%;float:left;height:auto;}
+.content-center-right{width:20%;float:left;height:auto;min-width:200px;}
 .show{display:block;}
 .changeLike{background-color:purple;color:white;}
 .changeLike:hover{background-color:purple;color:white;}
 .changeLike:focus{background-color:purple;color:white;}
-.rightbar{float:right;width:14%;}
+.rightbar{float:right;width:13%;min-width:150px;margin-left:2px;background-color:rgb(192, 192, 199);border-radius:5px;}
 .rightbar li{text-align:center;font-weight:bold;}
 .stories_list{list-style-type:none;padding:0px;margin:0px;}
 .stories_list li:hover{background-color:rgba(192,192,192,0.3);}
@@ -67,11 +73,42 @@ animation:load 1s infinite;
 .lykmodal:hover{border-bottom:2px solid #8D8FFE;}
 .lykmodal:focus{border-bottom:2px solid #8D8FFE;}
 .lykmodalheader{background-color:#E8E8E8;border-bottom:2px solid #8D8FFE;}
-
-
+#sidebar{min-width:160px;position:fixed;}
 </style>
 <script>
-	
+		document.addEventListener('readystatechange', event => {
+  if (event.target.readyState === 'interactive') {
+	console.log('loading...');
+    var body=document.body;
+		  var div=document.createElement('div');
+		  div.style.height="100vh";
+		  div.style.width="100vw";
+		  div.classList.add('loading');
+		  var img=document.createElement('img');
+		  img.setAttribute('src',"spinner.svg");
+		  img.style.height="200px";
+		  img.style.width="200px";
+		  div.appendChild(img);
+		  div.style.zIndex="5";
+		  body.style.overflowY="hidden";
+		  body.insertBefore(div,body.firstChild);
+		  div.style.position="absolute";
+		  img.style.position="absolute";
+		  img.style.top="0";
+		  img.style.bottom="0";
+		  img.style.left="0";
+		  img.style.right="0";
+		  img.style.margin="auto";
+		  div.style.backgroundColor="white";
+
+  }
+  else if (event.target.readyState === 'complete') {
+	console.log('complete...');
+		var div=document.getElementsByClassName('loading')[0];
+		div.remove();
+		document.body.style.overflowY="initial";
+  }
+});
 function online_check(){
 	var xhttp=new XMLHttpRequest();
 		xhttp.onreadystatechange=function(){
@@ -158,6 +195,7 @@ d_footer.appendChild(a);
 d_footer.appendChild(send);
 d.style.boxShadow="5px 5px 5px grey";
 	 d.appendChild(d_footer);
+	 
       x.appendChild(d);msgupdate(d_body,userid);
  send.addEventListener("click",function(){chatadd(userid,a.value);a.value="";
  setTimeout(function(){msgupdate(d_body,userid);},500);});
@@ -213,6 +251,11 @@ function msgupdate(container,userid){
 		};
        xhttp.open("GET","messages.php?id="+userid,true);xhttp.send();
 }
+var url='postsindexed.php';
+fetch(url)
+.then(function(res){
+ console.log('fetchformmain',res);
+})
 	function message(){
 		<?php
 		 $sq="select posts.userid,posts.status,posts.imgstatus,posts.postid,posts.update_date,CONCAT(users.first,' ',users.last)as name,sum(if(postslikes.likes IS NULL,0,1)) as lik,sum(if(postslikes.comment IS NULL,0,1)) as comm from (posts left join postslikes on posts.postid=postslikes.posts),users,friends where users.id=posts.userid and (select if(friends.friend_id=".$us." ,friends.fid,friends.friend_id))=users.id  and friends.request='accept' and (friends.fid=".$us." or friends.friend_id=".$us.") group by posts.postid order by update_date DESC";
@@ -513,17 +556,17 @@ var z=0;
 <?php include 'header.php'; ?>
 <div class="content" style="background-color:#e3e4e5;width:auto;padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;">
 <?php include 'sidebar.php'; ?>
-<div class="content-center" id="main"><div class="panel panel-default"><div class="panel-heading" style="font-size:20px;">
+<div class="content-center" id="main"><div class="panel panel-default" id="addpost"><div class="panel-heading" style="font-size:20px;">
 <b>Add Post</b>
 <button type="submit" form="stat" class="btn btn-success" style="float:right;font-size:10px;"><b>Post</b>
 </button></div><div class="panel-body"><form id="stat" method="POST" action="post.php" >
 	<textarea type="text" placeholder="What's on your mind?" style="width:100%;border:none;resize:none;" name="status">
-</textarea></form></div><div class="panel-footer"><form action="upload.php" method="POST" enctype="multipart/form-data" id="imgform">
+</textarea></form></div><div class="panel-footer"><form action="upload.php?src=main" method="POST" enctype="multipart/form-data" id="imgform">
 <input type="file" name="file" id="files" style="display:none;"/>
-<input type="submit" name="submit" id="up" style="display:none;" /></form><button class="btn btn-primary bta" data-toggle="modal" data-target="#mymodal">Photo/video</button><button class="btn btn-primary">Feeling/Activity</button></div></div>
+<input type="submit" name="submit" id="up" style="display:none;" /></form><button class="btn bta" style="background-color:purple;color:white" data-toggle="modal" data-target="#mymodal">Photo/video</button><button class="btn" style="background-color:purple;color:white">Feeling/Activity</button></div></div>
 </div>
 <div class="content-center-right">
-<div class="panel panel-default"><div class="panel-heading"><b>Stories</b></div><div class="panel-body" style="min-height:60px;">
+<div class="panel panel-default" id="stories_cont"><div class="panel-heading"><b>Stories</b></div><div class="panel-body" style="min-height:60px;">
 <ul class="stories_list"><li style="cursor:pointer;padding:5px;" onclick="showmodal();"><i class="material-icons" style="vertical-align:middle;color:blue;font-size:35px;">&#xe148; </i><span><b> Add your story</b></span><hr style="margin-top:5px;margin-bottom:0;"></li>
 <?php  $sq="select CONCAT(users.first,' ',users.last)as name,users.id,stories.update_time from stories,users,friends where stories.userid=users.id and friends.friend_id=stories.userid and friends.request='accept' and friends.fid=".$us." order by stories.update_time desc LIMIT 2";
 		$resul=mysqli_query($con,$sq);
@@ -535,5 +578,78 @@ var z=0;
 </div>
 <div class="rightbar"><h1 style="font-size:18px;text-align:center;"><b>Online friends</b></h1><ul id="rightbar_ul"></ul></div>
 </div>
+<script>
+var sidebar=document.getElementById('sidebar');
+var main=document.getElementById('main');
+var content_center_right=document.getElementsByClassName('content-center-right')[0];
+var rightbar=document.getElementsByClassName('rightbar')[0];
+var stories_list=document.getElementsByClassName('stories_list')[0].children[0];
+var stories_cont=document.getElementById('stories_cont');
+var addpost=document.getElementById('addpost');
+var main=document.getElementById('main');
+var searchicon=document.getElementById('searchicon');
+var bars=document.getElementById('bars');
+var fbicon=document.getElementById('fbicon');
+
+function myFunction2(y) {
+  if (y.matches) {console.log('300-850');
+  searchicon.style.display="inline-block";
+main.insertBefore(stories_cont,addpost.nextSibling);
+document.getElementById('searchform').style.display="none";
+   sidebar.style.display="none";
+   main.style.width="100%";
+   content_center_right.style.width="100%";
+   rightbar.style.display="none";
+   main.style.marginLeft="0";
+   stories_list.style.textAlign="center";
+   bars.style.display="inline-block";
+   fbicon.style.display="none";
+  }
+}
+function myFunction3(z){
+	if (z.matches) {console.log('855-1120');
+		content_center_right.insertBefore(stories_cont,content_center_right.firstChild);
+		searchicon.style.display="none";
+document.getElementById('searchform').style.display="block";
+   sidebar.style.display="none";
+   main.style.width="75%";
+   content_center_right.style.width="20%";
+   rightbar.style.display="none";
+   main.style.marginLeft="0";
+   stories_list.style.textAlign="left";
+   bars.style.display="inline-block";
+   fbicon.style.display="none";
+  }
+}
+function myFunction4(w){
+	if (w.matches) {
+		console.log('1121-');
+		content_center_right.insertBefore(stories_cont,content_center_right.firstChild);
+		searchicon.style.display="none";
+document.getElementById('searchform').style.display="block";
+	sidebar.style.display="initial";
+  main.style.width="50%";
+   content_center_right.style.width="20%";
+   rightbar.style.display="initial";
+   main.style.marginLeft="16%";
+   stories_list.style.textAlign="left";
+   bars.style.display="none";
+   fbicon.style.display="initial";
+	}
+  }
+var y=window.matchMedia("(min-width:300px) and (max-width:854px)");
+var z=window.matchMedia("(min-width:855px) and (max-width:1120px)");
+var w=window.matchMedia("(min-width:1121px)");
+y.addListener(myFunction2);
+z.addListener(myFunction3);
+w.addListener(myFunction4);
+myFunction2(y);
+myFunction3(z);
+myFunction4(w);
+</script>
+<script src="idb.js"></script>
+<script>
+
+</script>
 </body>
 </html>
