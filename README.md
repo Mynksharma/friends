@@ -14,5 +14,10 @@ A social networking site built by using HTML,CSS,Bootstrap,Javascript,AJAX,PHP a
 <img src="/uploads/likecomment.png"><br/><br/>
 <img src="/uploads/fbres.png">
 <img src="/uploads/fbres2.png"><br/><br/>
+<img src="/uploads/addfriendsresponsive.png">
+<img src="/uploads/friendlistresponsive.png"><br/><br/><img src="/uploads/main2responsive.png">
+<img src="/uploads/mainresponsive.png"><br/><br/><img src="/uploads/offline2responsive.png">
+<img src="/uploads/offlineresponsive.png"><br/><br/>
+<img src="/uploads/profileresponsive.png"><br/><br/>
 
 
