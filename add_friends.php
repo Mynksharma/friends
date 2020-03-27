@@ -85,7 +85,7 @@ color:white;}
 		thumb.style.border="none";
 		thumb.style.marginBottom="0";
 			var image=document.createElement("img");<?php if($r['gender']=="Male"){?>
-			image.src="uploads\\default.png";<?php }else{?>image.src="uploads\\defaultf.png";<?php }?>
+			image.src="static_images\\default.png";<?php }else{?>image.src="static_images\\defaultf.png";<?php }?>
 			image.style.height="160px";
 			thumb.appendChild(link);
 			link.appendChild(image);

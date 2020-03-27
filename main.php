@@ -24,7 +24,7 @@ $naml=$row['last'];
 <style>
 
 body{margin:0;width:100%;overflow-x:hidden;font-family:'Helvetica';}
-.header{background-color:purple;padding:10px;min-height:70px;color:white;position:fixed;z-index:1030;top:0;right:0;left:0;}
+.header{background-color:purple;padding:10px;min-height:70px;color:white;position:fixed;z-index:5;top:0;right:0;left:0;}
 .header-inner{width:85%;margin:0 auto;padding:10px;}
 .ab ul{list-style-type:none;margin:0;padding:0;float:right;}
 .ab{float:right;}
@@ -48,6 +48,7 @@ body{margin:0;width:100%;overflow-x:hidden;font-family:'Helvetica';}
 .changeLike:hover{background-color:purple;color:white;}
 .changeLike:focus{background-color:purple;color:white;}
 .rightbar{float:right;width:13%;min-width:150px;margin-left:2px;background-color:rgb(192, 192, 199);border-radius:5px;}
+#offlinediv{width:32%;background-color:white;border-radius:5px;margin-left:2px;float:right;display:none;padding:10px;margin-bottom:20px;}
 .rightbar li{text-align:center;font-weight:bold;}
 .stories_list{list-style-type:none;padding:0px;margin:0px;}
 .stories_list li:hover{background-color:rgba(192,192,192,0.3);}
@@ -76,9 +77,10 @@ animation:load 1s infinite;
 #sidebar{min-width:160px;position:fixed;}
 </style>
 <script>
+function btntosidebar(){
+	let side=document.getElementById("sidebar");if(side.style.display==="none") side.style.display="initial";else  side.style.display="none";}
 		document.addEventListener('readystatechange', event => {
   if (event.target.readyState === 'interactive') {
-	console.log('loading...');
     var body=document.body;
 		  var div=document.createElement('div');
 		  div.style.height="100vh";
@@ -103,7 +105,6 @@ animation:load 1s infinite;
 
   }
   else if (event.target.readyState === 'complete') {
-	console.log('complete...');
 		var div=document.getElementsByClassName('loading')[0];
 		div.remove();
 		document.body.style.overflowY="initial";
@@ -134,10 +135,11 @@ function online_check(){
        xhttp.open("GET","online.php",true);xhttp.send();
 
 	}
+	if(navigator.onLine){
 online_check();
 setInterval(() => {
 	online_check();
-}, 5*1000);
+}, 5*1000);}
 function chat(userid,username){
 	console.log("yss");
 	var x = document.getElementsByTagName("body")[0];
@@ -257,8 +259,9 @@ fetch(url)
  console.log('fetchformmain',res);
 })
 	function message(){
+		if(navigator.onLine){
 		<?php
-		 $sq="select posts.userid,posts.status,posts.imgstatus,posts.postid,posts.update_date,CONCAT(users.first,' ',users.last)as name,sum(if(postslikes.likes IS NULL,0,1)) as lik,sum(if(postslikes.comment IS NULL,0,1)) as comm from (posts left join postslikes on posts.postid=postslikes.posts),users,friends where users.id=posts.userid and (select if(friends.friend_id=".$us." ,friends.fid,friends.friend_id))=users.id  and friends.request='accept' and (friends.fid=".$us." or friends.friend_id=".$us.") group by posts.postid order by update_date DESC";
+		 $sq="select posts.userid,posts.status,posts.imgstatus,posts.postid,posts.update_date,CONCAT(users.first,' ',users.last)as name,sum(if(postslikes.likes IS NULL,0,1)) as lik,sum(if(postslikes.comment IS NULL,0,1)) as comm from (posts left join postslikes on posts.postid=postslikes.posts),users,friends where users.id=posts.userid and (posts.userid=".$us." or ((select if(friends.friend_id=".$us." ,friends.fid,friends.friend_id))=users.id  and friends.request='accept' and (friends.fid=".$us." or friends.friend_id=".$us."))) group by posts.postid order by update_date DESC";
 		$resul=mysqli_query($con,$sq);
 		$sql="select posts from postslikes where user=".$us." and likes=1";
 		$result=mysqli_query($con,$sql);$array=array();
@@ -266,8 +269,32 @@ fetch(url)
 		while($find=mysqli_fetch_assoc($result)){
 			$array[]=$find['posts'];
 		}
-		while($r=mysqli_fetch_array($resul)){ ?>
-	 var divi=document.getElementById("main");
+		while($r=mysqli_fetch_array($resul)){ 
+			if(array_search($r['postid'],$array)) $mylike='yes';
+			else $mylike='no';
+			?> 
+		content("<?php echo ' '.$r['name'] ?>","<?php $d=strtotime($r['update_date']);echo date('d M h:i a',$d)?>","<?php if(is_null($r['status'])){echo 'null';} else{echo $r['status'];}?>","<?php  if(is_null($r['imgstatus'])){echo 'null';} else{echo $r['imgstatus'];}?>","<?php echo $r['lik']; ?> likes .<?php echo " ".$r['comm']; ?>  Comments","<?php echo $r['postid'];?>","<?php echo $mylike ?>");
+		<?php }?>}
+		else{
+			if('indexedDB' in window){
+            readAllData('posts')
+            .then(function(data){
+				data.reverse();
+            if(data.length!=0){
+               for(let item of data){
+				   if(item.status==null) item.status='null';
+				   if(item.imgstatus==null) item.imgstatus='null';
+				content(item.name,item.update_date,item.status,item.imgstatus,item.likes+' likes .'+item.comments+' Comments',item.id,item.mylike);
+			   }
+             }
+             }
+			)
+		}
+	}
+}
+
+function content(name,update_date,status,imgstatus,likes_comments,postid,mylike){
+		var divi=document.getElementById("main");
 		var d=document.createElement("div");
 		d.classList.add("panel");
 		d.classList.add("panel-default");
@@ -276,9 +303,9 @@ fetch(url)
 		d1.classList.add("panel-heading");
 		d.appendChild(d1);
 		var img=document.createElement("img");
-		img.setAttribute('src',"uploads\\default.png");
+		img.setAttribute('src',"static_images\\default.png");
 		img.style.height="25px";img.style.borderRadius="50%";
-		var node=document.createTextNode("<?php echo " ".$r['name'] ?>");
+		var node=document.createTextNode(name);
 		d1.appendChild(img);
 		d1.appendChild(node);
 		d1.style.fontWeight="bold";
@@ -287,18 +314,22 @@ fetch(url)
 		d.appendChild(d2);var time=document.createElement("p");
 		time.style.color="grey";
 		time.style.fontSize="13px";
-	   var node=document.createTextNode("<?php $d=strtotime($r['update_date']);echo date('d M h:i a',$d)?>");
-	   time.appendChild(node);d2.appendChild(time);<?php if(is_null($r['imgstatus'])){?>
-		var node=document.createTextNode("<?php echo $r['status'] ?>");
+	   var node1=document.createTextNode(update_date);
+	   time.appendChild(node1);
+	   d2.appendChild(time);
+	   if(imgstatus=='null'){
+		var node=document.createTextNode(status);
 		var d2_main=document.createElement("div");
 		d2_main.style.fontStyle="italic";d2_main.style.fontSize="20px";
-	   d2_main.appendChild(node);<?php }if(is_null($r['status'])){?>
+	   d2_main.appendChild(node); }
+	   if(status=='null'){
 	   var d2_main=document.createElement("div"); 
 	   var img=document.createElement("img");d2_main.style.width="70%";img.style.width="100%";d2_main.style.margin="0 auto";img.style.height="auto";
-		img.setAttribute('src',"uploads\\"+"<?php echo $r['imgstatus'];?>");d2_main.appendChild(img);
-	        <?php } ?>d2.appendChild(d2_main);
+		img.setAttribute('src',"uploads\\"+imgstatus);d2_main.appendChild(img);
+			 } 
+			d2.appendChild(d2_main);
 		d2_likes=document.createElement("div");
-		var node=document.createTextNode("<?php echo $r['lik']; ?> likes .<?php echo " ".$r['comm']; ?>  Comments");
+		var node=document.createTextNode(likes_comments);
 		d2_likes.appendChild(node);
 		d2_likes.style.marginTop="10px";
 		d2_likes.style.color="grey";
@@ -308,8 +339,9 @@ fetch(url)
 		d2.appendChild(d2_likes);
 		d2_likes.setAttribute('data-toggle','modal');
 		d2_likes.setAttribute('data-target','#likesmodal');
-		d2_likes.addEventListener("click",function(){console.log("yes i called");
-		showmodal(<?php echo $r['postid']; ?>);});
+		d2_likes.addEventListener("click",function(){
+		showmodal(postid);
+	});
 		var d3=document.createElement("div");
 		d3.classList.add("panel-footer");
 		d.appendChild(d3);
@@ -317,12 +349,13 @@ fetch(url)
 		d3.appendChild(b);
 		b.classList.add("btn");b.style.border="none";
 		b.classList.add("btn-default");var like=document.createElement("i");like.classList.add("fa");like.classList.add("fa-thumbs-o-up");b.appendChild(like);
-		b.setAttribute("id","<?php echo $r['postid'];?>")
+		b.setAttribute("id",postid) 
 		var node=document.createTextNode(" Like");
 		b.appendChild(node);b.style.fontWeight="bold";	
 		b.style.marginRight="10px";
-		<?php if(array_search($r['postid'],$array)){?>
-		b.classList.add("changeLike");<?php } ?>
+	    if(mylike=='yes'){
+		b.classList.add("changeLike");
+		 }
        b.addEventListener("click",function(){
 		this.classList.toggle("changeLike");likehandle(this);
 	   });
@@ -336,9 +369,20 @@ fetch(url)
 		c.appendChild(node);c.style.fontWeight="bold";
 		c.addEventListener("click",function(){this.style.display="none";
 		commentbox(this)});
-	<?php }?>
 	}
-	
+
+	window.addEventListener('load', function() {
+		if(!navigator.onLine){
+	var storysection=document.getElementsByClassName('content-center-right')[0];
+	var onlinesection=document.getElementsByClassName('rightbar')[0];
+	storysection.innerHTML="";
+	onlinesection.innerHTML="";
+   var offlinediv= document.getElementById('offlinediv');
+   offlinediv.style.display="block";
+   var headsection=document.getElementById('headsection');headsection.innerHTML='';
+   headsection.innerHTML='<div class="header" style="min-width:400px;"><div class="header-inner"><span class="fa" id="bars" style="font-size:30px;float:left;margin-right:20px;cursor:pointer;" onClick="btntosidebar();">&#xf039;</span><h2 style="float:left;margin:0;margin-right:40px;"><b>F.R.I.E.N.D.S</b></h2></div></div>';
+}
+	});
 	function choose(){
 		var photo=document.getElementById("files");
 	photo.click();document.getElementById('files').addEventListener('change',handleFileSelect,false);
@@ -434,7 +478,7 @@ else{ console.log("no contains"); httpreq(id,"delete",butt);}
 		var a=document.getElementById("imgform");
 	a.reset();
 	var image=document.getElementById("image");
-	image.src="uploads\\default.png";
+	image.src="static_images\\default.png";
 	}
 var z=0;
 	function showmodal(postid){
@@ -510,7 +554,7 @@ var z=0;
 					div.style.borderRadius="5px";
 					div.style.color="black";div.style.fontWeight="bold";
 					var img=document.createElement("img");
-		           img.setAttribute('src',"uploads\\default.png");
+		           img.setAttribute('src',"static_images\\default.png");
 		          img.style.height="25px";img.style.borderRadius="50%";
 				  img.style.border="2px solid blue";img.style.padding="3px";img.style.verticalAlign="middle";img.style.marginRight="5px";
                   div.appendChild(img);
@@ -546,21 +590,23 @@ var z=0;
 							</button></h2>
 					</div>
 					<div class="modal-body">
-					   <img src="uploads\default.png" style="display:block;margin:auto;" height="100px" id="image"><br><br>
+					   <img src="static_images\default.png" style="display:block;margin:auto;" height="100px" id="image"><br><br>
 						<button class="btn btn-primary bta" onclick="choose();" style="margin-right:20px;">Choose Photo</button>
 					<button class="btn btn-primary bta" onclick="upload();"  id="upload" disabled>Upload Photo</button>
 					</div>
 				</div>
 			</div>
 		</div>
-<?php include 'header.php'; ?>
+		
+<div id="headsection">
+	<?php include 'header.php'; ?></div>
 <div class="content" style="background-color:#e3e4e5;width:auto;padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;">
 <?php include 'sidebar.php'; ?>
 <div class="content-center" id="main"><div class="panel panel-default" id="addpost"><div class="panel-heading" style="font-size:20px;">
 <b>Add Post</b>
 <button type="submit" form="stat" class="btn btn-success" style="float:right;font-size:10px;"><b>Post</b>
-</button></div><div class="panel-body"><form id="stat" method="POST" action="post.php" >
-	<textarea type="text" placeholder="What's on your mind?" style="width:100%;border:none;resize:none;" name="status">
+</button></div><div class="panel-body"><form id="stat">
+	<textarea type="text" placeholder="What's on your mind?" style="width:100%;border:none;resize:none;" name="status" id="statarea">
 </textarea></form></div><div class="panel-footer"><form action="upload.php?src=main" method="POST" enctype="multipart/form-data" id="imgform">
 <input type="file" name="file" id="files" style="display:none;"/>
 <input type="submit" name="submit" id="up" style="display:none;" /></form><button class="btn bta" style="background-color:purple;color:white" data-toggle="modal" data-target="#mymodal">Photo/video</button><button class="btn" style="background-color:purple;color:white">Feeling/Activity</button></div></div>
@@ -571,16 +617,21 @@ var z=0;
 <?php  $sq="select CONCAT(users.first,' ',users.last)as name,users.id,stories.update_time from stories,users,friends where stories.userid=users.id and friends.friend_id=stories.userid and friends.request='accept' and friends.fid=".$us." order by stories.update_time desc LIMIT 2";
 		$resul=mysqli_query($con,$sq);
 		while($r=mysqli_fetch_array($resul)){  ?>
-<li data-x="<?php echo $r['id'];?>" style="font-weight:bold;cursor:pointer;padding:8px;"><img src="uploads\default.png" style="height: 35px; border-radius: 50%; border: 2px solid blue; padding: 3px; vertical-align: middle; margin-right: 5px;"/><?php echo $r['name']; ?></li>
+<li data-x="<?php echo $r['id'];?>" style="font-weight:bold;cursor:pointer;padding:8px;"><img src="static_images\default.png" style="height: 35px; border-radius: 50%; border: 2px solid blue; padding: 3px; vertical-align: middle; margin-right: 5px;"/><?php echo $r['name']; ?></li>
 		<?php }  ?>
 </ul>
 </div><div class="panel-footer"><a href="strories.php" style="text-decoration:none;"><button class="btn btn-default btn-block">See more</button></a></div></div>
 </div>
 <div class="rightbar"><h1 style="font-size:18px;text-align:center;"><b>Online friends</b></h1><ul id="rightbar_ul"></ul></div>
+<div id="offlinediv">
+<img src="static_images/offline.svg" alt="" style="width:100px;height:100px;margin:auto;display:block;margin-top:10px;">
+<h3 style="text-align:center;"><i>You are offline!!</i></h3>
+</div>
 </div>
 <script>
 var sidebar=document.getElementById('sidebar');
 var main=document.getElementById('main');
+var contentt=document.getElementsByClassName('content')[0];
 var content_center_right=document.getElementsByClassName('content-center-right')[0];
 var rightbar=document.getElementsByClassName('rightbar')[0];
 var stories_list=document.getElementsByClassName('stories_list')[0].children[0];
@@ -590,51 +641,69 @@ var main=document.getElementById('main');
 var searchicon=document.getElementById('searchicon');
 var bars=document.getElementById('bars');
 var fbicon=document.getElementById('fbicon');
-
+var offlinediv=document.getElementById('offlinediv');
 function myFunction2(y) {
   if (y.matches) {console.log('300-850');
+	if(navigator.onLine){
   searchicon.style.display="inline-block";
-main.insertBefore(stories_cont,addpost.nextSibling);
-document.getElementById('searchform').style.display="none";
-   sidebar.style.display="none";
-   main.style.width="100%";
+  main.insertBefore(stories_cont,addpost.nextSibling);
+  document.getElementById('searchform').style.display="none";
    content_center_right.style.width="100%";
    rightbar.style.display="none";
-   main.style.marginLeft="0";
    stories_list.style.textAlign="center";
+   fbicon.style.display="none";}
+   else{
+	   offlinediv.style.float='none';
+	   offlinediv.style.width='100%';
+	main.insertBefore(offlinediv,addpost.nextSibling);
+   }
    bars.style.display="inline-block";
-   fbicon.style.display="none";
+   sidebar.style.display="none";
+   main.style.marginLeft="0";
+   main.style.width="100%";
   }
 }
 function myFunction3(z){
 	if (z.matches) {console.log('855-1120');
+		if(navigator.onLine){
 		content_center_right.insertBefore(stories_cont,content_center_right.firstChild);
 		searchicon.style.display="none";
 document.getElementById('searchform').style.display="block";
-   sidebar.style.display="none";
-   main.style.width="75%";
    content_center_right.style.width="20%";
    rightbar.style.display="none";
-   main.style.marginLeft="0";
    stories_list.style.textAlign="left";
+   fbicon.style.display="none";}
+   else{
+	   offlinediv.style.float='right';
+	   offlinediv.style.width='20%';
+	   contentt.insertBefore(offlinediv,contentt.lastChild);
+   }
    bars.style.display="inline-block";
-   fbicon.style.display="none";
+   sidebar.style.display="none";
+   main.style.width="75%";
+   main.style.marginLeft="0";
   }
 }
 function myFunction4(w){
 	if (w.matches) {
 		console.log('1121-');
+		if(navigator.onLine){
 		content_center_right.insertBefore(stories_cont,content_center_right.firstChild);
 		searchicon.style.display="none";
 document.getElementById('searchform').style.display="block";
-	sidebar.style.display="initial";
-  main.style.width="50%";
    content_center_right.style.width="20%";
-   rightbar.style.display="initial";
-   main.style.marginLeft="16%";
+  rightbar.style.display="initial";
    stories_list.style.textAlign="left";
+   fbicon.style.display="initial";}
+   else{
+	   offlinediv.style.float='right';
+	   offlinediv.style.width='32%';
+	   contentt.insertBefore(offlinediv,contentt.lastChild);
+   }
+   sidebar.style.display="initial";
    bars.style.display="none";
-   fbicon.style.display="initial";
+   main.style.width="50%";
+   main.style.marginLeft="16%";
 	}
   }
 var y=window.matchMedia("(min-width:300px) and (max-width:854px)");
@@ -647,9 +716,63 @@ myFunction2(y);
 myFunction3(z);
 myFunction4(w);
 </script>
-<script src="idb.js"></script>
-<script>
+<script src="idb.js"></script> 
+	<script src="utility.js"></script>
+	<script>
+	var form=document.querySelector('#stat');
+	form.addEventListener('submit',function(event){
+		event.preventDefault();
+		var c=document.getElementById('statarea').value;
+		document.getElementById('statarea').value='';
+		if('serviceWorker' in navigator && 'SyncManager' in window){
+			navigator.serviceWorker.ready
+			.then(function(sw){
+				var post={
+					id:new Date().toISOString(),
+					p:c
+				};
+				writeData('sync-posts',post).then(function(){
+					return sw.sync.register('sync-new-posts');
+				})
+				.then(function(){displayConfirmNotification();})
+			})
+			.catch((err)=>{
+				console.log(err);
+			})
+		}
+	})
+	function displayConfirmNotification(){
+    var options={
+    body:'New post added!!',
+    icon:'/phplearning/facebook/src/icons/network96.png',
+    image:'/phplearning/facebook/src/icons/network256.png',
+    dir:'ltr',
+    lang:'en-US',//BCP 47
+    vibrate:[100,50,200],
+    badge:'/phplearning/facebook/src/icons/network96.png',
+    tag:'confirm-notification',
+    renotify:true,
+    actions:[
+        {action:'confirm' ,title:'Okay'},
+        {action:'cancel' ,title:'Cancel'},
+    ]
+    }
+    //new Notification('Successfully subscribed',options)
+    navigator.serviceWorker.ready
+    .then(function(swreg){
+        swreg.showNotification('New post added!!',options);
+    });
+}
 
-</script>
+function askfornotificationpermission(){
+    Notification.requestPermission(function(result){
+        console.log('User choice',result);
+        if(result!='granted'){
+            console.log('NO notification permission granted');
+        }
+    })
+}
+askfornotificationpermission();
+	</script>
 </body>
 </html>

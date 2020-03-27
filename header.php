@@ -5,40 +5,7 @@ $sql='select friends.fid,CONCAT(users.first," ",users.last) as name from friends
  $sql1="select count(chats.id) as msgcount from chats where status='0' and friend_id='$us'";
  $result_msg=mysqli_query($con,$sql1);$r=mysqli_fetch_array($result_msg);
  ?>
-<div class="header" style="min-width:400px;">
-<div class="header-inner">
-<span class="fa" id='bars' style="font-size:30px;float:left;margin-right:20px;cursor:pointer;" onClick="btntosidebar();">&#xf039;</span>
-<span class="fa" id="fbicon" style="font-size:30px;float:left;margin-right:20px;">&#xf082;</span>
-<form class="form-inline" style="float:left;" id="searchform" ><input type="text" style="width:300px;color:black;border:none;padding:5px;height:30px;"/><input type="submit" class="fa" value= "&#xf002;" style="width:50px;border:none;padding:5px;color:black;height:30px;" />
-</form>
-<div class="ab">
-<ul>
-<li>
-<a href="javascript:void(0);" class="fa fa-users" onclick="showreqbox();" class="dropbtn">
-<?php if(mysqli_num_rows($result_req)!=0){?><span class="label label-pill  label-danger lb" style="position:absolute;right:10px;top:10px;"><?php echo mysqli_num_rows($result_req);?></span><?php }?>
-</a>
-<div class="reqcoll"><?php while($row=mysqli_fetch_array($result_req)){ ?>
-<div class="coll" data-x="<?php echo $row['fid']; ?>"><img src="uploads\default.png" style="width:30px;" /><a href="profile.php?id=<?php echo $row['fid'] ?>"> <b><i><?php echo $row['name'] ?></i></b></a><div style="margin-top:5px">
-<button type="button" class="btn btn-primary" style="padding:3px 3px;" data-x="<?php echo $row['fid'] ?>" onClick="request_approval(this,'confirm');"><i>Confirm</i></button>
-<button type="button" class="btn btn-warning" style="padding:3px 3px;" data-x="<?php echo $row['fid'] ?>" onClick="request_approval(this,'decline');"><i>Decline</i></button>
-</div>
-  </div><?php } ?></div>
-</li>
-<li>
-<a href="javascript:void(0);" class="fa" onclick="showmsgbox();">&#xf0e0;<?php if($r['msgcount']!=0){?><span class="label label-pill  label-danger mb" style="position:relative;right:10px;top:10px;"><?php echo $r['msgcount']; ?></span><?php } ?>
-</a>
-<div class="msgcol" style="display:none;position:absolute;background-color:white;min-height:50px;min-width:300px;z-index:1;border-radius:5px;box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);top:40px;right:5px;color:black;">
-</div>
-</li>
-<li>
-<a href="javascript:void(0);" class="fa fa-newspaper-o" onclick="shownotifybox();"><span class="label label-pill  label-danger" style="position:relative;right:10px;top:10px;"></span></a>
-</li>
-<li><i style="float:right;" class="fa" id="searchicon">&#xf002;</i>
-</li>
-</ul>
-</div>
-</div></div>
-<script>
+<div class="header" style="min-width:400px;"><div class="header-inner"><span class="fa" id='bars' style="font-size:30px;float:left;margin-right:20px;cursor:pointer;" onClick="btntosidebar();">&#xf039;</span><span class="fa" id="fbicon" style="font-size:30px;float:left;margin-right:20px;">&#xf082;</span><form class="form-inline" style="float:left;" id="searchform" ><input type="text" style="width:300px;color:black;border:none;padding:5px;height:30px;"/><input type="submit" class="fa" value= "&#xf002;" style="width:50px;border:none;padding:5px;color:black;height:30px;" /></form><div class="ab"><ul><li><a href="javascript:void(0);" class="fa fa-users" onclick="showreqbox();" class="dropbtn"><?php if(mysqli_num_rows($result_req)!=0){?><span class="label label-pill  label-danger lb" style="position:absolute;right:10px;top:10px;"><?php echo mysqli_num_rows($result_req);?></span><?php }?></a><div class="reqcoll"><?php while($row=mysqli_fetch_array($result_req)){ ?><div class="coll" data-x="<?php echo $row['fid']; ?>"><img src="static_images\default.png" style="width:30px;" /><a href="profile.php?id=<?php echo $row['fid'] ?>"> <b><i><?php echo $row['name'] ?></i></b></a><div style="margin-top:5px"><button type="button" class="btn btn-primary" style="padding:3px 3px;margin-right:5px;" data-x="<?php echo $row['fid'] ?>" onClick="request_approval(this,'confirm');"><i>Confirm</i></button><button type="button" class="btn btn-warning" style="padding:3px 3px;" data-x="<?php echo $row['fid'] ?>" onClick="request_approval(this,'decline');"><i>Decline</i></button></div></div><?php } ?></div></li><li><a href="javascript:void(0);" class="fa" onclick="showmsgbox();">&#xf0e0;<?php if($r['msgcount']!=0){?><span class="label label-pill  label-danger mb" style="position:relative;right:10px;top:10px;"><?php echo $r['msgcount']; ?></span><?php } ?></a><div class="msgcol" style="display:none;position:absolute;background-color:white;min-height:50px;min-width:300px;z-index:1;border-radius:5px;box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);top:40px;right:5px;color:black;"></div></li><li><a href="javascript:void(0);" class="fa fa-newspaper-o" onclick="shownotifybox();"><span class="label label-pill  label-danger" style="position:relative;right:10px;top:10px;"></span></a></li><li><i style="float:right;" class="fa" id="searchicon">&#xf002;</i></li></ul></div></div></div><script>
 function showreqbox(){var callist=document.getElementsByClassName('reqcoll')[0];callist.classList.toggle("show");
 if(callist.classList.contains("show")){
 	if(!callist.children.length){
@@ -111,7 +78,7 @@ if(c[i]['id']==c[i-1]['id']){
 		 block.setAttribute("data-x",i['id']);
 		 callist.appendChild(block);
 		 var img=document.createElement("img");
-		 img.setAttribute("src","uploads\\default.png");
+		 img.setAttribute("src","static_images\\default.png");
 		 img.style.width="30px";
 		 block.appendChild(img);
 		 var content=document.createElement("span");

@@ -21,3 +21,5 @@ $_SESSION['email']=$row['email'];
 $sq="INSERT INTO online(userid) values(".$pr.")";
 header("Location:main.php?$a");}
 ?>
+
+

@@ -3,23 +3,23 @@
     "short_name":"FRNDS",
       "display":"standalone",
       "orientation":"portrait-primary",
-      "background_color":"blue",
-      "theme_color":"blue",
-      "start_url":"fb.php",
+      "background_color":"purple",
+      "theme_color":"purple",
+      "start_url":"/phplearning/facebook/fb.php",
       "icons":[{
-          "src":"src/icons/app-icon-48x48.png",
+          "src":"/phplearning/facebook/src/icons/network48.png",
           "sizes":"48x48"
       },
       {
-        "src":"src/icons/app-icon-96x96.png",
+        "src":"/phplearning/facebook/src/icons/network96.png",
         "sizes":"96x96"
     },
     {
-        "src":"src/icons/app-icon-144x144.png",
+        "src":"/phplearning/facebook/src/icons/network144.png",
         "sizes":"144x144"
     },
     {
-        "src":"src/icons/app-icon-256x256.png",
+        "src":"/phplearning/facebook/src/icons/network256.png",
         "sizes":"256x256"
     }]
 }

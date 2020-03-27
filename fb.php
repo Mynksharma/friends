@@ -1,4 +1,5 @@
-<?php require 'commonfb.php';
+<?php 
+require 'commonfb.php';
 if(isset($_SESSION['email'])){header("location:main.php");}
 //#e3e4e5
 ?>
@@ -6,10 +7,11 @@ if(isset($_SESSION['email'])){header("location:main.php");}
 <html>
 <head>
 <title></title>
-<link rel="manifest" href="manifest.json"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="manifest" href="manifest.json"/>
+	<script src="app.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=0.83,user-scalable=no">
 <style>
 body{margin:0;width:100%;overflow-x:hidden;font-family:'Helvetica';}
@@ -66,7 +68,6 @@ width:20px;height:20px;vertical-align:middle;}
 
 	document.addEventListener('readystatechange', event => {
   if (event.target.readyState === 'interactive') {
-	console.log('loading...');
     var body=document.body;
 		  var div=document.createElement('div');
 		  div.style.height="100vh";
@@ -150,11 +151,11 @@ width:20px;height:20px;vertical-align:middle;}
 	
 	</script>
 </head>
-<body onload="message();">
+<body>
 <div class="header">
 <div class="header-inner">
 <h1 style="float:left;margin:0;margin-right:40px;"><b>F.R.I.E.N.D.S</b></h1>
-<form class="form-inline may2" style="float:right " method="POST" action="login_sub.php" id="loginformfull"><label for="email" style="margin-right:4px;">Email </label><input type="text" class="form-control input-sm" name="email" style="margin-right:4px;"/> 
+<form class="form-inline may2" style="float:right " method="POST" action="login_sub.php" id="loginformfull"><label for="email" style="margin-right:4px;">Email </label><input type="text" class="form-control input-sm" name="email" style="margin-right:4px;" onkeypress="a();"/> 
 <label for="Password" style="margin-right:4px;"> Password </label><input type="password" class="form-control input-sm" name="password" style="margin-right:4px;"/>
 <input type="submit" value="Login" class="btn btn-success" id='loginfbfull' />
 </form><div class="may"><a href="#" data-toggle="modal" data-target="#mymodal" class="btn btn-success log">LOGIN</a>
@@ -166,7 +167,7 @@ width:20px;height:20px;vertical-align:middle;}
 					</div>
 					<div class="modal-body">Don't have a account?<a href="#">Register</a><br><br>
 						<form method="POST" action="login_sub.php" id="loginformmodal">
-						<div class="form-group"><input class="form-control input-lg" type="email" name="email" placeholder="Email"/></div>
+						<div class="form-group"><input class="form-control input-lg" type="email" name="email" placeholder="Email" onkeypress="a();"/></div>
 					 <div class="form-group"><input class="form-control input-lg" type="password" name="password" placeholder="Password"/></div>
 					<div class="form-group"><input class="btn btn-primary btn-lg" type="submit" value="Submit" id='loginfbmodal'/>
 					</div>
@@ -189,7 +190,12 @@ width:20px;height:20px;vertical-align:middle;}
 <p style="color:#b3b5b7;">By clicking signup,you agree to our Terms,Data Policy and Cookie Policy.You may receive SMS notifications from us and can opt out at any time.</p>
 <input type="submit" value="Sign Up" class="btn btn-success btn-lg submitfb"/>
 </form></div></div></div>
-<script src="app.js">
+<script>function a(){
+ if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt=null;
+  }}
 </script>
 </body>
+
 </html>

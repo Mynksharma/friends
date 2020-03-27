@@ -45,6 +45,9 @@ padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;}
 .content-left li:hover a{color:green;}
 .cont-center{float:left;}
 .conback{border-radius:5px;}
+.changeLike{background-color:purple;color:white;}
+.changeLike:hover{background-color:purple;color:white;}
+.changeLike:focus{background-color:purple;color:white;}
 .thu{position:absolute;bottom:-20px;z-index:2;width:100%;height:120px;}
 #thuprofileimg{height:120px;width:120px;border:2px solid grey;margin:0 0 0 30px;}
 .profileDet li a{color:blue;font-weight:bold;text-decoration:none;}
@@ -57,12 +60,22 @@ padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;}
 #sidebar{min-width:160px;position:fixed;z-index:5}
     </style>
     <script>function message(){
-	    
     	<?php
-		 $sq="select posts.status,posts.postid,posts.imgstatus,posts.update_date,CONCAT(users.first,' ',users.last)as name,count(postslikes.likes) as lik,count(postslikes.comment) as comm from (posts left join postslikes on posts.postid=postslikes.posts),users where users.id=posts.userid and users.id='$a'  group by posts.postid  order by update_date DESC;";
-		$resul=mysqli_query($con,$sq);
-		while($r=mysqli_fetch_array($resul)){ ?>
-	 var divi=document.getElementById("posts");
+		 $sq="select posts.userid,posts.status,posts.imgstatus,posts.postid,posts.update_date,CONCAT(users.first,' ',users.last)as name,sum(if(postslikes.likes IS NULL,0,1)) as lik,sum(if(postslikes.comment IS NULL,0,1)) as comm from (posts left join postslikes on posts.postid=postslikes.posts),users,friends where users.id=posts.userid and users.id=".$a." group by posts.postid order by update_date DESC";
+		 $resul=mysqli_query($con,$sq);
+		 $sql="select posts from postslikes where user=".$a." and likes=1";
+		 $result=mysqli_query($con,$sql);$array=array();
+		 $array[]=0;
+		 while($find=mysqli_fetch_assoc($result)){
+			 $array[]=$find['posts'];
+		 }
+		 while($r=mysqli_fetch_array($resul)){ 
+			 if(array_search($r['postid'],$array)) $mylike='yes';
+			 else $mylike='no';
+			 ?> 
+		 content("<?php echo ' '.$r['name'] ?>","<?php $d=strtotime($r['update_date']);echo date('d M h:i a',$d)?>","<?php if(is_null($r['status'])){echo 'null';} else{echo $r['status'];}?>","<?php  if(is_null($r['imgstatus'])){echo 'null';} else{echo $r['imgstatus'];}?>","<?php echo $r['lik']; ?> likes .<?php echo " ".$r['comm']; ?>  Comments","<?php echo $r['postid'];?>","<?php echo $mylike ?>"); <?php } ?>}
+	function content(name,update_date,status,imgstatus,likes_comments,postid,mylike){
+		var divi=document.getElementById("posts");
 		var d=document.createElement("div");
 		d.classList.add("panel");
 		d.classList.add("panel-default");
@@ -71,9 +84,9 @@ padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;}
 		d1.classList.add("panel-heading");
 		d.appendChild(d1);
 		var img=document.createElement("img");
-		img.setAttribute('src',"uploads\\default.png");
+		img.setAttribute('src',"static_images\\default.png");
 		img.style.height="25px";img.style.borderRadius="50%";
-		var node=document.createTextNode("<?php echo " ".$r['name'] ?>");
+		var node=document.createTextNode(name);
 		d1.appendChild(img);
 		d1.appendChild(node);
 		d1.style.fontWeight="bold";
@@ -82,24 +95,34 @@ padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;}
 		d.appendChild(d2);var time=document.createElement("p");
 		time.style.color="grey";
 		time.style.fontSize="13px";
-	   var node=document.createTextNode("<?php $d=strtotime($r['update_date']);echo date('d M h:i a',$d)?>");
-	   time.appendChild(node);d2.appendChild(time);<?php if(is_null($r['imgstatus'])){?>
-		var node=document.createTextNode("<?php echo $r['status'] ?>");
+	   var node1=document.createTextNode(update_date);
+	   time.appendChild(node1);
+	   d2.appendChild(time);
+	   if(imgstatus=='null'){
+		var node=document.createTextNode(status);
 		var d2_main=document.createElement("div");
 		d2_main.style.fontStyle="italic";d2_main.style.fontSize="20px";
-	   d2_main.appendChild(node);<?php }if(is_null($r['status'])){?>
+	   d2_main.appendChild(node); }
+	   if(status=='null'){
 	   var d2_main=document.createElement("div"); 
 	   var img=document.createElement("img");d2_main.style.width="70%";img.style.width="100%";d2_main.style.margin="0 auto";img.style.height="auto";
-		img.setAttribute('src',"uploads\\"+"<?php echo $r['imgstatus'];?>");d2_main.appendChild(img);
-	        <?php } ?>d2.appendChild(d2_main);
+		img.setAttribute('src',"uploads\\"+imgstatus);d2_main.appendChild(img);
+			 } 
+			d2.appendChild(d2_main);
 		d2_likes=document.createElement("div");
-		var node=document.createTextNode("<?php echo $r['lik']; ?> likes ||<?php echo " ".$r['comm']; ?>  Comments");
+		var node=document.createTextNode(likes_comments);
 		d2_likes.appendChild(node);
 		d2_likes.style.marginTop="10px";
 		d2_likes.style.color="grey";
 		d2_likes.style.fontSize="14px";
 		d2_likes.style.fontStyle="italic";
+		d2_likes.style.cursor="pointer";
 		d2.appendChild(d2_likes);
+		d2_likes.setAttribute('data-toggle','modal');
+		d2_likes.setAttribute('data-target','#likesmodal');
+		/*d2_likes.addEventListener("click",function(){
+		showmodal(postid);
+	});*/
 		var d3=document.createElement("div");
 		d3.classList.add("panel-footer");
 		d.appendChild(d3);
@@ -107,23 +130,25 @@ padding:75px 20px;clear:both;display:table;width:100%;min-height:100vh;}
 		d3.appendChild(b);
 		b.classList.add("btn");b.style.border="none";
 		b.classList.add("btn-default");var like=document.createElement("i");like.classList.add("fa");like.classList.add("fa-thumbs-o-up");b.appendChild(like);
-		b.setAttribute("id","<?php echo $r['postid'];?>")
+		b.setAttribute("id",postid) 
 		var node=document.createTextNode(" Like");
 		b.appendChild(node);b.style.fontWeight="bold";	
 		b.style.marginRight="10px";
+	    if(mylike=='yes'){
+		b.classList.add("changeLike");
+		 }
        b.addEventListener("click",function(){
 		this.classList.toggle("changeLike");likehandle(this);
 	   });
 
 		var c=document.createElement("button");
-		
 		d3.appendChild(c);c.style.border="none";
 		c.classList.add("btn");
-		c.classList.add("btn-default");var comment=document.createElement("i");comment.classList.add("fa");comment.classList.add("fa-thumbs-o-up");
+		c.classList.add("btn-default");var comment=document.createElement("i");comment.classList.add("fa");comment.classList.add("fa-commenting-o");
         c.appendChild(comment);
 		var node=document.createTextNode(" Comment");
 		c.appendChild(node);c.style.fontWeight="bold";
-    <?php }?>}
+	}
 	function likehandle(butt){
 		var id=butt.getAttribute("id");
      if(butt.classList.contains("changeLike")){
@@ -159,8 +184,8 @@ else{ console.log("no contains"); httpreq(id,"delete",butt);}
 		</button><?php } ?>
 		<div class="thu">
 		<div class="thumbnail" id="thuprofileimg">
-<?php if($gender=="Male"){?><img src="uploads/default.png" alt="profile" style="height:100%;width:auto;" />
-	<?php }else{?><img src="uploads/defaultf.png" alt="profile" style="height:100%;width:auto;"/><?php } ?></div>
+<?php if($gender=="Male"){?><img src="static_images/default.png" alt="profile" style="height:100%;width:auto;" />
+	<?php }else{?><img src="static_images/defaultf.png" alt="profile" style="height:100%;width:auto;"/><?php } ?></div>
 	</div>
 	</div>
         <div style="background-color:white;width:100%;position:relative;" class="profileDet">

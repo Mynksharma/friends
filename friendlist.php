@@ -16,7 +16,7 @@ $naml=$row['last'];
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=0.83,user-scalable=no">
-    <link rel="manifest" href="/manifest.json"/>
+    <link rel="manifest" href="manifest.json"/>
     <title></title>
     <style>
     body{margin:0;width:100%;overflow-x:hidden;font-family:'Helvetica';}
@@ -73,7 +73,7 @@ while($r=mysqli_fetch_array($result)){
     d1.appendChild(dthumb);
    var d1_cont=document.createElement("div");
 var d1_img=document.createElement("img");
-d1_img.setAttribute("src","uploads//default.png");
+d1_img.setAttribute("src","/phplearning/facebook/static_images/default.png");
 
 d1_img.style.height="35px";
 d1_img.style.borderRadius="50%";
@@ -101,7 +101,7 @@ d1_cont.style.top="0";d1_cont.style.bottom="0";d1_cont.style.left="0";d1_cont.st
 <?php include 'sidebar.php'; ?> 
 <div class="content-right" style="float:left;min-height:80vh;">
 <div class="jumbotron" style="text-align:center;padding:10px;width:95%;margin:0 auto;margin-top:10px;margin-bottom:20px;">
-<img src="uploads/friendship.png" style="height:40px;margin-right:10px;" />
+<img src="/phplearning/facebook/static_images/friendship.png" style="height:40px;margin-right:10px;" />
 <h2 style="display:inline-block;margin:0;vertical-align:middle;"><b><?php echo $namf;?> friends' list</b></h2>
 </div>
 
