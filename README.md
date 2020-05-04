@@ -1,5 +1,5 @@
 # friends
-A social networking site built by using HTML,CSS,Bootstrap,Javascript,AJAX,PHP and MySQL.
+A social networking site built by using HTML,CSS,Bootstrap,Javascript,AJAX,PHP and MySQL.<br/>A Progressive Web App that provides features like offline support, background synchronization, push notifications and responsiveness.
 ## Screenshots
 *Some Glimpses of the website:*
 <br/><br/>
